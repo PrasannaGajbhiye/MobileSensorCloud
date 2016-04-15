@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'user.apps.UserLoginConfig',
     'dashboard.apps.DashboardConfig',
+    'sensor_owner.apps.SensorOwnerConfig',
     'influxdb_metrics',
 ]
 

@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% block title %}Sensor Owner Manage Sensors{% endblock %}
+{% block stylesheet %}/static/sensor_owner_style.css{% endblock %}
+
+{% block body %}
+    <div id="wrapper">
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="sensor_owner_home.html">Mobile Sensor Cloud</a>
+            </div>
+            <!-- Top Menu Items -->
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="message-preview">
+                        <a href="#">
+                            <span class="glyphicon glyphicon-off" aria-hidden="true"></span>&nbsp;Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav side-nav">
+                    <li class="active">
+                        <a href="{% url 'sensor_owner:ownerDashboard' %}"><span class="glyphicon glyphicon-dashboard"></span>&nbsp;Overview</a>
+                    </li>
+                    <li>
+                        <a href="#"><span class="glyphicon glyphicon-check"></span>&nbsp; Monitor</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'sensor_owner:ownerManage' %}"><span class="glyphicon glyphicon-adjust"></span>&nbsp; Manage sensors</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </nav>
+
+        <div id="page-wrapper">
+
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-header">
+                            Manage Sensors
+                        </h1>
+                    </div>
+                </div>
+                <!-- /.row -->
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-money fa-fw"></i> Manage Sensors</h3>
+                            </div>
+                            <div class="panel-body">
+                                <ul class="nav nav-pills nav-justified">
+                                    <li id="addSensor" class="manage_menu"><a href="#">Add New Sensor</a></li>
+                                    <li id="removeSensor" class="manage_menu"><a href="#">Remove Existing Sensor</a></li>
+                                </ul>
+                                <br>
+                                <div id="divAddSensor" class="">
+                                    <form accept-charset="UTF-8" role="form" action="" method="post">
+                                        {% csrf_token %}
+                                        {% include 'form_template.html' %}
+                                        <div class="form-group">
+                                            <div class="col-sm-3">
+                                                <button type="submit" class="btn btn-success">Add Sensor</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div id="divRemoveSensor">
+                                    <div class="table-responsive">
+                                <table id="sensor-list" class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Sensor ID</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                            <th>Latitude</th>
+                                            <th>Longitude</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                       {% if available_sensors %}
+                                           {% for sensor in available_sensors %}
+                                                <tr class="clickable-row" id="{{ forloop.counter }}">
+                                                    <td>{{ sensor.station }}</td>
+                                                    <td>{{ sensor.sensor_type }}</td>
+                                                    <td>{{ sensor.station_desc }}</td>
+                                                    <td>{{ sensor.latitude }}</td>
+                                                    <td>{{ sensor.longitude }}</td>
+                                                    {% if sensor.active == 1 %}
+                                                        <td>Active</td>
+                                                    {% else %}
+                                                        <td>Inactive</td>
+                                                    {% endif %}
+                                                   <td>
+                                                       <button class="btn-danger">Terminate</button>
+                                                   </td>
+                                               </tr>
+                                           {% endfor %}
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+    <script>
+        $(document).ready(function() {
+            $('#addSensor').addClass('active');
+            $('#divAddSensor').show();
+            $('#divRemoveSensor').hide();
+        });
+
+        $('.manage_menu').on('click',function (event) {
+            if($(this).attr('id')=='addSensor'){
+                $('#removeSensor').removeClass('active');
+                $(this).addClass('active');
+                $('#divAddSensor').show();
+                $('#divRemoveSensor').hide();
+            }else if($(this).attr('id')=='removeSensor'){
+                $('#addSensor').removeClass('active');
+                $(this).addClass('active');
+                $('#divAddSensor').hide();
+                $('#divRemoveSensor').show();
+            }
+        });
+
+        $('#sensor-list').on('click', '.clickable-row', function(event) {
+            alert($(this).attr('id')+' was clicked');
+            $(this).addClass('table-row-color').siblings().removeClass('table-row-color');
+        });
+    </script>
+{% endblock %}
